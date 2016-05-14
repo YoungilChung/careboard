@@ -26,9 +26,11 @@ class Careboard: KeyboardViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+
+    
+    override func viewWillAppear(animated: Bool) {
         typeEventList = [TypeEvent]()
+        super.viewWillAppear(animated)
     }
     
     override func keyPressed(key: Key) {
@@ -39,9 +41,9 @@ class Careboard: KeyboardViewController {
         textDocumentProxy.insertText(keyOutput)
         
         let e = TypeEvent(tsp: NSDate(), keyType: "\(key.type)")
-        typeEventList.append(e)
         //let userDefaults = NSUserDefaults(suiteName: "com.zad.careboard")
         //let user = userDefaults?.stringForKey("userKey")
+        typeEventList.append(e)
         banner.updateAppearance(e)
         
         // display current type on the banner
@@ -142,6 +144,37 @@ class Careboard: KeyboardViewController {
             self.view.backgroundColor = oldViewColor
         }
     }
+    
+    override func viewWillDisappear(animated: Bool) {
+        if typeEventList.count > 0 {
+            // write to file
+            saveTypeEventList()
+            typeEventList = [TypeEvent]()
+        }
+        super.viewWillDisappear(animated)
+    }
+    
+    // MARK: NSCoding
+    func saveTypeEventList() {
+        // save the current type events appending on saved ones
+        var saved = loadTypeEventList()
+        if saved != nil{
+            saved = saved! + typeEventList
+        }else{
+            saved = typeEventList
+        }
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(saved!, toFile: TypeEvent.ArchiveURL.path!)
+        if !isSuccessfulSave {
+            print("Failed to save ...")
+        }else{
+            print("Saved \(saved!.count) of type events")
+        }
+    }
+    
+    func loadTypeEventList() -> [TypeEvent]? {
+        return NSKeyedUnarchiver.unarchiveObjectWithFile(TypeEvent.ArchiveURL.path!) as? [TypeEvent]
+    }
+
 }
 
 //func randomCat() -> String {
