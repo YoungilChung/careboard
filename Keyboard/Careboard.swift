@@ -13,6 +13,9 @@ import UIKit
 class Careboard: KeyboardViewController {
     
     let takeDebugScreenshot: Bool = false
+    var typeEventList: [TypeEvent]!
+    var banner: CareboardBanner!
+//static var user: String!
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
 //        NSUserDefaults.standardUserDefaults().registerDefaults([kCatTypeEnabled: true])
@@ -23,12 +26,25 @@ class Careboard: KeyboardViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        typeEventList = [TypeEvent]()
+    }
+    
     override func keyPressed(key: Key) {
         let textDocumentProxy = self.textDocumentProxy
         
         let keyOutput = key.outputForCase(self.shiftState.uppercase())
         
         textDocumentProxy.insertText(keyOutput)
+        
+        let e = TypeEvent(tsp: NSDate(), keyType: "\(key.type)")
+        typeEventList.append(e)
+        //let userDefaults = NSUserDefaults(suiteName: "com.zad.careboard")
+        //let user = userDefaults?.stringForKey("userKey")
+        banner.updateAppearance(e)
+        
+        // display current type on the banner
         
 //        if !NSUserDefaults.standardUserDefaults().boolForKey(kCatTypeEnabled) {
 //            textDocumentProxy.insertText(keyOutput)
@@ -93,7 +109,8 @@ class Careboard: KeyboardViewController {
     }
     
     override func createBanner() -> ExtraView? {
-        return CareboardBanner(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode())
+        banner = CareboardBanner(globalColors: self.dynamicType.globalColors, darkMode: false, solidColorMode: self.solidColorMode())
+        return banner
     }
     
     func takeScreenshotDelay() {

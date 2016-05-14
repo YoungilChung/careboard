@@ -15,15 +15,16 @@ with something (or leave it blank if you like.)
 
 class CareboardBanner: ExtraView {
     
-    var catSwitch: UISwitch = UISwitch()
-    var catLabel: UILabel = UILabel()
+    //var catSwitch: UISwitch = UISwitch()
+    var careLabel: UILabel = UILabel()
+    let dateFormatter = NSDateFormatter()
     
     required init(globalColors: GlobalColors.Type?, darkMode: Bool, solidColorMode: Bool) {
         super.init(globalColors: globalColors, darkMode: darkMode, solidColorMode: solidColorMode)
         
 //        self.addSubview(self.catSwitch)
-//        self.addSubview(self.catLabel)
-//        
+        self.addSubview(self.careLabel)
+        dateFormatter.dateFormat = "HH:mm:ss"
 //        self.catSwitch.on = NSUserDefaults.standardUserDefaults().boolForKey(kCatTypeEnabled)
 //        self.catSwitch.transform = CGAffineTransformMakeScale(0.75, 0.75)
 //        self.catSwitch.addTarget(self, action: #selector(CareboardBanner.respondToSwitch), forControlEvents: UIControlEvents.ValueChanged)
@@ -42,9 +43,9 @@ class CareboardBanner: ExtraView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        self.catSwitch.center = self.center
-        self.catLabel.center = self.center
-        self.catLabel.frame.origin = CGPointMake(self.catSwitch.frame.origin.x + self.catSwitch.frame.width + 8, self.catLabel.frame.origin.y)
+//        self.catSwitch.center = self.center
+        self.careLabel.center = self.center
+        self.careLabel.frame.origin = CGPointMake(0, self.careLabel.frame.origin.y)
     }
     
 //    func respondToSwitch() {
@@ -52,7 +53,7 @@ class CareboardBanner: ExtraView {
 //        self.updateAppearance()
 //    }
     
-//    func updateAppearance() {
+    func updateAppearance( e:TypeEvent) {
 //        if self.catSwitch.on {
 //            self.catLabel.text = "😺"
 //            self.catLabel.alpha = 1
@@ -61,7 +62,13 @@ class CareboardBanner: ExtraView {
 //            self.catLabel.text = "🐱"
 //            self.catLabel.alpha = 0.5
 //        }
-//        
-//        self.catLabel.sizeToFit()
-//    }
+//        if user.characters.count != 0{
+//            self.careLabel.text = "user: \(user)    \(dateFormatter.stringFromDate(e.tsp)) \(e.keyType)"
+//        }else{
+//            self.careLabel.text = "\(dateFormatter.stringFromDate(e.tsp)) \(e.keyType)"
+//        }
+//        print(user)
+        self.careLabel.text = "\(dateFormatter.stringFromDate(e.tsp)) \(e.keyType)"
+        self.careLabel.sizeToFit()
+    }
 }
